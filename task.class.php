@@ -27,21 +27,38 @@ class Task {
         $this->TaskDescription = 'New Description';
     }
     protected function getUniqueId() {
-        // Assignment: Code to get new unique ID
-        return -1; // Placeholder return for now
+        return count($this->TaskDataSource)+1; // returns the first available ID
     }
     protected function LoadFromId($Id = null) {
         if ($Id) {
-            // Assignment: Code to load details here...
+			// Looks at all the IDS!
+            foreach($this->TaskDataSource as $tsk){
+				if($Id == $tsk->TaskId){
+					$this->TaskName = $tsk->TaskName;
+					$this->TaskDescription = $tsk->TaskDescription;
+					$this->TaskId = $Id;
+					return true;
+				}
+			}
+			return false;
         } else
             return null;
     }
 
     public function Save() {
-        //Assignment: Code to save task here
+		$this->TaskDataSource[$this->TaskId-1] = $this;
+		file_put_contents("Task_Data.txt",json_encode($this->TaskDataSource));
     }
     public function Delete() {
-        //Assignment: Code to delete task here
+        $last = $this->TaskDataSource[count($this->TaskDataSource)-1];
+		if($last->TaskId == $this->TaskId){					// If is the last element in the array then its fine to just remove it
+			unset($this->TaskDataSource[count($this->TaskDataSource)-1]);
+		}else{												// If not then replace the destructing element with the last one in the list reasigning the ID so there are no unused ones
+			unset($this->TaskDataSource[$last->TaskId - 1]);
+			$last->TaskId = $this->TaskId;
+			$this->TaskDataSource[$last->TaskId-1] = $last;
+		}
+		file_put_contents("Task_Data.txt",json_encode($this->TaskDataSource));
     }
 }
 ?>

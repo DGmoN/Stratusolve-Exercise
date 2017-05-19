@@ -77,25 +77,45 @@
         var modal = $(this);
         if (triggerElement.attr("id") == 'newTask') {
             modal.find('.modal-title').text('New Task');
+			
+			modal.find("#InputTaskName").val("");
+			modal.find("#InputTaskDescription").val("");
+			
             $('#deleteTask').hide();
             currentTaskId = -1;
         } else {
             modal.find('.modal-title').text('Task details');
             $('#deleteTask').show();
             currentTaskId = triggerElement.attr("id");
+			
+			// My addition
+			var name	=	triggerElement.find(".list-group-item-heading").html();
+			var disc	=	triggerElement.find(".list-group-item-text").html();
+			modal.find("#InputTaskName").val(name);
+			modal.find("#InputTaskDescription").val(disc);
+			// End of my addition
+			
             console.log('Task ID: '+triggerElement.attr("id"));
         }
     });
     $('#saveTask').click(function() {
         //Assignment: Implement this functionality
         alert('Save... Id:'+currentTaskId);
-        $('#myModal').modal('hide');
+		var mod = $('#myModal');
+        mod.modal('hide');
+		
+		$.post("update_task.php", {action: "save", 
+									TId: currentTaskId, 
+									TName: mod.find("#InputTaskName").val(),
+									TDisc: mod.find("#InputTaskDescription").val()})
         updateTaskList();
     });
     $('#deleteTask').click(function() {
         //Assignment: Implement this functionality
         alert('Delete... Id:'+currentTaskId);
         $('#myModal').modal('hide');
+		$.post("update_task.php", {action: "del", 
+									TId: currentTaskId})
         updateTaskList();
     });
     function updateTaskList() {
