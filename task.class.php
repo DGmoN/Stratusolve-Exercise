@@ -45,9 +45,20 @@ class Task {
             return null;
     }
 
+	public function Exists(){
+		$compare = $this->TaskDataSource[$this->TaskId-1];
+		
+		
+		
+		return 	$this->TaskName == $compare->TaskName 
+					and
+				$this->TaskDescription == $compare->TaskDescription;
+	}
+	
     public function Save() {
 		$this->TaskDataSource[$this->TaskId-1] = $this;
 		file_put_contents("Task_Data.txt",json_encode($this->TaskDataSource));
+		return true;
     }
     public function Delete() {
         $last = $this->TaskDataSource[count($this->TaskDataSource)-1];
@@ -59,6 +70,7 @@ class Task {
 			$this->TaskDataSource[$last->TaskId-1] = $last;
 		}
 		file_put_contents("Task_Data.txt",json_encode($this->TaskDataSource));
+		return true;
     }
 }
 ?>

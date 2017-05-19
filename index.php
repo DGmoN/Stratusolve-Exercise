@@ -103,11 +103,18 @@
         alert('Save... Id:'+currentTaskId);
 		var mod = $('#myModal');
         mod.modal('hide');
+		var Action = "save";
+		if(currentTaskId==-1){
+			Action = "create";
+		}
 		
-		$.post("update_task.php", {action: "save", 
+		
+		$.post("update_task.php", {action: Action, 
 									TId: currentTaskId, 
 									TName: mod.find("#InputTaskName").val(),
-									TDisc: mod.find("#InputTaskDescription").val()})
+									TDisc: mod.find("#InputTaskDescription").val()},
+									handleResponce);
+									
         updateTaskList();
     });
     $('#deleteTask').click(function() {
@@ -118,6 +125,16 @@
 									TId: currentTaskId})
         updateTaskList();
     });
+	
+	function handleResponce(jso){
+		var obj = $.parseJSON(jso);
+		if(obj.status == '1'){
+			alert("Sucsessful");
+		}else{
+			alert("Not so sucsessful\n"+obj.cause);
+		}
+	}
+	
     function updateTaskList() {
         $.post("list_tasks.php", function( data ) {
             $( "#TaskList" ).html( data );

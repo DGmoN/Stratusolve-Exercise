@@ -5,19 +5,34 @@
 require('Task.class.php');
 
 $task = new Task($_POST['TId']);
-print_r($task);
-print_r($_POST);
+
+$Tname = htmlentities($_POST['TName']);
+$Tdis = htmlentities($_POST['TDisc']);
+if(!isset($Tname) || empty($Tname)) die(json_encode(array("status"=>0, "cause"=> "Name cant be empty")));
+if(!isset($Tdis) || empty($Tdis)) die(json_encode(array("status"=>0, "cause"=> "Discryption cant be empty")));
+
 
 switch($_POST['action']){
 	case 'save':
-		$Tname = htmlentities($_POST['TName']);
-		$Tdis = htmlentities($_POST['TDisc']);
+		if(!$task->Exists()){
+			die(json_encode(array("status"=>0, "cause"=> "Task does not exists")));
+		}
+	case 'create':
+		
 		$task->TaskName = $Tname;
 		$task->TaskDescription = $Tdis;
-		$task->save();
+		if($task->save()){
+			echo json_encode(array("status"=>1));
+		}else{
+			echo json_encode(array("status"=>0, "cause"=> "Failed to save"));
+		}
 		die();
 	case 'del':
-		$task->Delete();
+		if($task->Delete()){
+			echo json_encode(array("status"=>1));
+		}else{
+			echo json_encode(array("status"=>0, "cause"=> "Failed to delete"));
+		}
 		die();
 }
 
