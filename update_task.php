@@ -8,17 +8,23 @@ $task = new Task($_POST['TId']);
 
 $Tname = htmlentities($_POST['TName']);
 $Tdis = htmlentities($_POST['TDisc']);
+
+function check(){
+global $Tname;
+global $Tdis;
 if(!isset($Tname) || empty($Tname)) die(json_encode(array("status"=>0, "cause"=> "Name cant be empty")));
 if(!isset($Tdis) || empty($Tdis)) die(json_encode(array("status"=>0, "cause"=> "Discryption cant be empty")));
+}
 
 
 switch($_POST['action']){
 	case 'save':
+		check();
 		if(!$task->Exists()){
 			die(json_encode(array("status"=>0, "cause"=> "Task does not exists")));
 		}
 	case 'create':
-		
+		check();
 		$task->TaskName = $Tname;
 		$task->TaskDescription = $Tdis;
 		if($task->save()){
